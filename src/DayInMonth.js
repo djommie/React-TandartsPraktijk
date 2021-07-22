@@ -2,7 +2,7 @@ import React from "react";
 import AppointmentInMonth from "./AppointmentInMonth";
 
 function DayInMonth(props) {
-  const appointmentsJSX = props.appointments.map(({ time, patient, dentist }, index) => {
+  const appointmentsJSX = props.appointments.map(({ time, patient, dentist, id }, index) => {
 
     if (props.sickDentists.includes(dentist.id)) {
       return (
@@ -12,6 +12,8 @@ function DayInMonth(props) {
           key={index}
           dentist={dentist}
           sickStyle={props.sickStyle}
+          appointmentId={id}
+          removeAppointment={props.removeAppointment}
         />
       )
     } else {
@@ -22,6 +24,8 @@ function DayInMonth(props) {
           key={index}
           dentist={dentist}
           sickStyle={null}
+          appointmentId={id}
+          removeAppointment={props.removeAppointment}
         />
       )
     }

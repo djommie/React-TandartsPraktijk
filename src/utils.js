@@ -993,11 +993,6 @@ const names = [
   },
 ];
 
-const getRandomName = () => {
-  const person = names[Math.floor(Math.random() * 250)];
-  return `${person.name} ${person.surname}`;
-};
-
 
 // Helpers to generate 50 patients for state
 const getRandomFirst = () => {
@@ -1104,13 +1099,11 @@ const getRandomPatient = () => {
 
 
 const generateRandomAppointment = (index) => {
-  const dentist = getRandomDentist()
-  const patient = getRandomPatient()
   return {
     day: getRandomDay(),
     time: getRandomTime(),
-    patient: patient,
-    dentist: dentist,
+    patient: getRandomPatient(),
+    dentist: getRandomDentist(),
     assistant: getRandomAssistant(),
     id: index
   }

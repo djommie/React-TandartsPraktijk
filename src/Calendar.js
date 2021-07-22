@@ -16,7 +16,6 @@ const divideByDay = appointments => {
 
 function Calendar(props) {
   const appointmentsByDay = divideByDay(props.appointments)
-  console.log(props.sickDentists)
   const daysInMonthJSX = Object.values(
     appointmentsByDay
   ).map((appointmentsInDay, index) => (
@@ -25,11 +24,13 @@ function Calendar(props) {
       key={index}
       sickStyle={props.sickStyle}
       sickDentists={props.sickDentists}
+      removeAppointment={props.removeAppointment}
     />
   ));
 
   return (
     <div className="calendarview">
+      <h2>Click on the appointment to remove it.</h2>
       <div className="header">
         <div>Maandag</div>
         <div>Dinsdag</div>

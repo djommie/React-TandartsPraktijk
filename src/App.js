@@ -17,6 +17,12 @@ class App extends React.Component {
     this.addDentist = this.addDentist.bind(this)
     this.addPatient = this.addPatient.bind(this)
     this.makeDentistSick = this.makeDentistSick.bind(this)
+    this.checkAvailableDentist = this.checkAvailableDentist.bind(this)
+    this.checkAvailableAssistant = this.checkAvailableAssistant.bind(this)
+    this.addAppointment = this.addAppointment.bind(this)
+    this.removeAppointment = this.removeAppointment.bind(this)
+    this.makePatientSick = this.makePatientSick.bind(this)
+    this.moveAppointment = this.moveAppointment.bind(this)
     this.sickDentists = state.dentists.filter(dentist => dentist.healthy === false).map(dentist => dentist.id)
     this.sickStyle = {
       background: 'red'
@@ -91,8 +97,106 @@ class App extends React.Component {
         dentists: updatedDentists
       }
     })
-    console.log(this.state.dentists)
   }
+
+  makePatientSick(patientId) {
+    this.setState(prevState => {
+      let updatedAppointments = prevState.appointments.filter(appointment => appointment.patient.id !== patientId)
+      return {
+        appointments: updatedAppointments
+      }
+    })
+  }
+
+  addAppointment(event) {
+    event.preventDefault()
+    const patientId = parseInt(document.getElementById('app-patient-id').value)
+    const dentistId = parseInt(document.getElementById('app-dentist-id').value)
+    const assistantId = parseInt(document.getElementById('app-ass-id').value)
+    const patient = this.state.patients.filter(patient => patient.id === patientId)[0]
+    const dentist = this.state.dentists.filter(dentist => dentist.id === dentistId)[0]
+    const assistant = this.state.assistants.filter(assistant => assistant.id === assistantId)[0]
+    const time = parseInt(document.getElementById('app-time').value)
+    const day = parseInt(document.getElementById('app-day').value)
+    if (this.checkAvailableAssistant(assistantId, time, day) && this.checkAvailableDentist(dentistId, time, day)) {
+      this.setState(prevState => {
+        const updatedAppointments = prevState.appointments.concat({
+          day: day,
+          time: time,
+          patient: patient,
+          dentist: dentist,
+          assistant: assistant,
+          id: prevState.appointments.length + 1
+        }).sort((a, b) => a.time - b.time)
+        return {
+          appointments: updatedAppointments
+        }
+      })
+      alert('Appointment added!')
+    }
+  }
+
+  checkAvailableDentist(id, time, day) {
+    let avpeeps = this.state.appointments.filter(appointment => appointment.dentist.id === id)
+      .filter(appointment => appointment.time === time)
+      .filter(appointment => appointment.day === day)
+    if (avpeeps.length !== 0) {
+      alert('Dentist not available')
+      return false
+    } else {
+      return true
+    }
+  }
+
+  checkAvailableAssistant(id, time, day) {
+    let avpeeps = this.state.appointments.filter(appointment => appointment.assistant.id === id)
+      .filter(appointment => appointment.time === time)
+      .filter(appointment => appointment.day === day)
+    if (avpeeps.length !== 0) {
+      alert('Assistant not available')
+      return false
+    } else {
+      return true
+    }
+  }
+
+  removeAppointment(appointmentId) {
+    this.setState(prevState => {
+      let updatedAppointments = prevState.appointments.filter(appointment => appointment.id !== appointmentId)
+      return {
+        appointments: updatedAppointments
+      }
+    })
+  }
+
+  moveAppointment(event) {
+    event.preventDefault()
+    const appointmentId = parseInt(document.getElementById('move-app-id').value)
+    const newDay = parseInt(document.getElementById('move-day').value)
+    const newTime = parseInt(document.getElementById('move-time').value)
+    const appointment = this.state.appointments.filter(appointment => appointment.id === appointmentId)[0]
+    if (this.checkAvailableAssistant(appointment.assistant.id, newTime, newDay)
+      && this.checkAvailableDentist(appointment.dentist.id, newTime, newDay)) {
+      // Hier verwijder ik eerst de oude appointment om vervolgens een kopie met aangepaste tijd weer toe te voegen,
+      // is er een makkelijkere manier om rechtstreeks alleen de day en time aan te passen?
+      this.setState(prevState => {
+        let filteredAppointments = prevState.appointments.filter(appointment => appointment.id !== appointmentId)
+        let updatedAppointments = filteredAppointments.concat({
+          day: newDay,
+          time: newTime,
+          patient: appointment.patient,
+          dentist: appointment.dentist,
+          assistant: appointment.assistant,
+          id: appointment.id
+        }).sort((a, b) => a.time - b.time)
+        return {
+          appointments: updatedAppointments
+        }
+      })
+      alert('Appointment moved!')
+    }
+  }
+
 
 
   render() {
@@ -122,6 +226,7 @@ class App extends React.Component {
                   appointments={this.state.appointments}
                   sickDentists={this.sickDentists}
                   sickStyle={this.sickStyle}
+                  removeAppointment={this.removeAppointment}
                 />
               </Route>
               <Route path="/day">
@@ -136,6 +241,9 @@ class App extends React.Component {
                   addDentist={this.addDentist}
                   addPatient={this.addPatient}
                   makeDentistSick={this.makeDentistSick}
+                  makePatientSick={this.makePatientSick}
+                  addAppointment={this.addAppointment}
+                  moveAppointment={this.moveAppointment}
                   state={this.state}
                 />
               </Route>

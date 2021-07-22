@@ -1,10 +1,10 @@
 import React from 'react'
-import Person from './Person'
+import Dentist from './Dentist'
 
-function PersonDisplay(props) {
+function DentistDisplay(props) {
     const peopleList = props.people.map((person, index) => {
         return (
-            <Person
+            <Dentist
                 key={index}
                 firstName={person.firstName}
                 lastName={person.lastName}
@@ -34,4 +34,4 @@ function PersonDisplay(props) {
     )
 }
 
-export default PersonDisplay
+export default DentistDisplay

@@ -10,7 +10,7 @@ function AddPatient(props) {
                 <input type='tel' id='patient-phone' placeholder='Phone'></input>
                 <input type='text' id='patient-email' placeholder='Email'></input>
                 <input type='text' id='patient-birth-year' placeholder='Year of Birth'></input>
-                <button>Add Dentist</button>
+                <button>Add Patient</button>
             </form>
         </div>
     )
